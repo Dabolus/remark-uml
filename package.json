@@ -2,9 +2,7 @@
   "name": "remark-uml",
   "version": "1.0.0",
   "license": "MIT",
-  "type": "module",
   "main": "lib/index.js",
-  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc"
