@@ -37,7 +37,8 @@ const compileUml = ({
 
           return resolve(data);
         case 'png':
-          return resolve(`<img src="data:image/png;base64,${output}" alt="">`);
+          // NOTE: it might be a great idea to allow to specify an alt text somehow
+          return resolve(`![](data:image/png;base64,${output})`);
         case 'txt':
         case 'utxt':
           return resolve(
