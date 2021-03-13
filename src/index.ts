@@ -11,11 +11,14 @@ export interface RemarkUmlConfig {
   readonly languageName?: string | null;
 }
 
-const compileUml = ({
-  format = 'svg',
-  optimize = true,
-  languageName = 'uml',
-}: RemarkUmlConfig = {}) => (input: string): Promise<string> =>
+const compileUml = (
+  input: string,
+  {
+    format = 'svg',
+    optimize = true,
+    languageName = 'uml',
+  }: RemarkUmlConfig = {},
+): Promise<string> =>
   new Promise((resolve, reject) => {
     const puml = new PlantUmlPipe({ outputFormat: format });
 
@@ -55,8 +58,18 @@ const compileUml = ({
 const uml: Plugin<[RemarkUmlConfig?]> = (config = {}) => async (ast) => {
   const compiled = await replaceAsync(
     toMarkdown(ast),
-    /@startuml.+?@enduml/gs,
-    compileUml(config),
+    /@startuml({.+?})?.+?@enduml/gs,
+    (match, inlineConfig) => {
+      let parsedInlineConfig;
+      try {
+        parsedInlineConfig = JSON.parse(inlineConfig);
+      } catch {}
+
+      return compileUml(match, {
+        ...config,
+        ...parsedInlineConfig,
+      });
+    },
   );
 
   return fromMarkdown(compiled);
