@@ -2,9 +2,9 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "lib": ["esnext"],
-    "target": "es2019",
-    "module": "commonjs",
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "es2020",
     "moduleResolution": "node",
     "rootDir": "src",
     "outDir": "lib",
