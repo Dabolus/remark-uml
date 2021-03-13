@@ -6,28 +6,40 @@ import replaceAsync from 'string-replace-async';
 import type { Plugin } from 'unified';
 
 export interface RemarkUmlConfig {
+  readonly format?: 'svg' | 'txt' | 'utxt';
   readonly optimize?: boolean | null | OptimizeOptions;
+  readonly languageName?: string | null;
 }
 
-const compileUml = ({ optimize = true }: RemarkUmlConfig = {}) => (
-  input: string,
-): Promise<string> =>
+const compileUml = ({
+  format = 'svg',
+  optimize = true,
+  languageName = 'uml',
+}: RemarkUmlConfig = {}) => (input: string): Promise<string> =>
   new Promise((resolve, reject) => {
-    const puml = new PlantUmlPipe({ outputFormat: 'svg' });
+    const puml = new PlantUmlPipe({ outputFormat: format });
 
     puml.out.once('data', (outputBuffer: Buffer) => {
       const output = outputBuffer.toString();
 
-      if (!optimize) {
-        return resolve(output.slice(output.indexOf('?>') + 2));
+      switch (format) {
+        case 'svg':
+          if (!optimize) {
+            return resolve(output.slice(output.indexOf('?>') + 2));
+          }
+
+          const { data } = svgo(
+            output,
+            typeof optimize === 'boolean' ? { multipass: true } : optimize,
+          );
+
+          return resolve(data);
+        case 'txt':
+        case 'utxt':
+          return resolve(
+            `\`\`\`${languageName ? languageName : ''}\n${output}\n\`\`\``,
+          );
       }
-
-      const { data } = svgo(
-        output,
-        typeof optimize === 'boolean' ? { multipass: true } : optimize,
-      );
-
-      return resolve(data);
     });
     puml.out.once('error', reject);
 
