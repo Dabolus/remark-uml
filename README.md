@@ -217,3 +217,7 @@ The language name to give to the output code block. Used only if `options.format
 It can be any `string`, or a falsy value to disable the language name and make the code block generic.
 
 Default value is `uml`.
+
+## License
+
+[MIT](LICENSE)
