@@ -45,7 +45,7 @@ const compileUml = (
         case 'txt':
         case 'utxt':
           return resolve(
-            `\`\`\`${languageName ? languageName : ''}\n${output}\n\`\`\``,
+            `\`\`\`${languageName ? languageName : ''}\n${output}\`\`\``,
           );
       }
     });
