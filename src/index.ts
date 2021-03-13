@@ -6,7 +6,7 @@ import replaceAsync from 'string-replace-async';
 import type { Plugin } from 'unified';
 
 export interface RemarkUmlConfig {
-  readonly format?: 'svg' | 'txt' | 'utxt';
+  readonly format?: 'png' | 'svg' | 'txt' | 'utxt';
   readonly optimize?: boolean | null | OptimizeOptions;
   readonly languageName?: string | null;
 }
@@ -20,7 +20,9 @@ const compileUml = ({
     const puml = new PlantUmlPipe({ outputFormat: format });
 
     puml.out.once('data', (outputBuffer: Buffer) => {
-      const output = outputBuffer.toString();
+      const output = outputBuffer.toString(
+        format === 'png' ? 'base64' : 'utf8',
+      );
 
       switch (format) {
         case 'svg':
@@ -34,6 +36,8 @@ const compileUml = ({
           );
 
           return resolve(data);
+        case 'png':
+          return resolve(`<img src="data:image/png;base64,${output}" alt="">`);
         case 'txt':
         case 'utxt':
           return resolve(
