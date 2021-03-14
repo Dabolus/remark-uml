@@ -5,10 +5,12 @@ import toMarkdown from 'mdast-util-to-markdown';
 import replaceAsync from 'string-replace-async';
 import type { Plugin } from 'unified';
 
-export interface RemarkUmlConfig {
-  readonly format?: 'png' | 'svg' | 'txt' | 'utxt';
-  readonly optimize?: boolean | null | OptimizeOptions;
-  readonly languageName?: string | null;
+namespace uml {
+  export interface RemarkUmlConfig {
+    readonly format?: 'png' | 'svg' | 'txt' | 'utxt';
+    readonly optimize?: boolean | null | OptimizeOptions;
+    readonly languageName?: string | null;
+  }
 }
 
 const compileUml = (
@@ -17,7 +19,7 @@ const compileUml = (
     format = 'svg',
     optimize = true,
     languageName = 'uml',
-  }: RemarkUmlConfig = {},
+  }: uml.RemarkUmlConfig = {},
 ): Promise<string> =>
   new Promise((resolve, reject) => {
     const puml = new PlantUmlPipe({ outputFormat: format });
@@ -55,7 +57,7 @@ const compileUml = (
     puml.in.end();
   });
 
-const uml: Plugin<[RemarkUmlConfig?]> = (config = {}) => async (ast) => {
+const uml: Plugin<[uml.RemarkUmlConfig?]> = (config = {}) => async (ast) => {
   const compiled = await replaceAsync(
     toMarkdown(ast),
     /@startuml({.+?})?.+?@enduml/gs,
@@ -75,4 +77,4 @@ const uml: Plugin<[RemarkUmlConfig?]> = (config = {}) => async (ast) => {
   return fromMarkdown(compiled);
 };
 
-export default uml;
+export = uml;
