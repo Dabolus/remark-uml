@@ -4,6 +4,11 @@
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "author": "Giorgio Garasto <giorgio@garasto.me>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dabolus/remark-uml.git"
+  },
   "scripts": {
     "build": "tsc"
   },
